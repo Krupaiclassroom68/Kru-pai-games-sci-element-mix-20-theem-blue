@@ -1,0 +1,352 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Kru Pai Classroom – ภารกิจช่วยธาตุ (ธีมอวกาศ · 7 วิ)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#dfe9ff; --bg:#080b1a; --panel:#0e1330; --accent:#4cc9f0; --ok:#2dd4bf; --bad:#ff6b6b; --gold:#ffcf33;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans Thai",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+/* Space backdrop */
+.space{
+  position:fixed; inset:0; z-index:-1;
+  background:
+    radial-gradient(1200px 700px at 20% -10%, rgba(76,201,240,.12), transparent 60%),
+    radial-gradient(900px 600px at 80% 110%, rgba(255,255,255,.05), transparent 60%),
+    linear-gradient(#050816, #0a0f2d);
+}
+.stars, .stars2, .stars3{
+  position:fixed; inset:0; background-repeat:repeat; z-index:-1;
+  background-image: radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,.9) 50%, transparent 51%),
+                    radial-gradient(1.5px 1.5px at 130px 80px, rgba(255,255,255,.7) 50%, transparent 51%),
+                    radial-gradient(1.7px 1.7px at 90px 150px, rgba(255,255,255,.8) 50%, transparent 51%);
+  animation: drift 120s linear infinite;
+}
+.stars2{ animation-duration: 160s; opacity:.7 }
+.stars3{ animation-duration: 220s; opacity:.5 }
+@keyframes drift{ from { background-position: 0 0, 0 0, 0 0 } to { background-position: 1000px 600px, -800px -500px, 1200px -700px } }
+
+.header{position:sticky;top:0;z-index:50;background:linear-gradient(90deg,rgba(10,15,45,.8),rgba(8,11,26,.8));
+  border-bottom:2px solid rgba(76,201,240,.25); box-shadow:0 6px 18px rgba(0,0,0,.4); backdrop-filter: blur(6px);}
+.banner{max-width:1200px;margin:auto;display:flex;align-items:center;gap:12px;padding:10px 16px}
+.logo{font-weight:900;letter-spacing:.5px;font-size:clamp(20px,3vw,34px);color:var(--accent)}
+.brand{margin-left:auto;font-size:12px;opacity:.8}
+.wrap{max-width:1200px;margin:16px auto; padding:12px}
+.card{background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015));
+  border:1px solid rgba(255,255,255,.12); border-radius:22px; padding:16px; box-shadow:0 18px 40px rgba(0,0,0,.35)}
+h1{margin:.2rem 0 .4rem; font-size:clamp(26px,4.6vw,44px)}
+.subtitle{margin:0 0 10px 0;opacity:.9}
+.row{display:grid;grid-template-columns:1fr;gap:14px} @media(min-width:900px){.row{grid-template-columns:1fr 1fr}}
+.input{width:100%;padding:12px 14px;border-radius:12px;border:2px solid rgba(76,201,240,.5);background:#0b1233;color:var(--ink);font-size:18px}
+.btn{appearance:none;border:none;border-radius:14px;padding:12px 18px;font-weight:900;letter-spacing:.3px;cursor:pointer;
+  background:linear-gradient(180deg,#8de3ff,#4cc9f0); color:#051423; box-shadow:0 10px 0 #217c98, 0 16px 36px rgba(76,201,240,.28)}
+.btn:hover{transform:translateY(-2px)} .btn:active{transform:translateY(2px)}
+.btn.red{background:linear-gradient(180deg,#ff9dad,#ff6b6b); color:#200a0a; box-shadow:0 10px 0 #a32727, 0 16px 36px rgba(255,77,77,.25)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.badge{display:inline-block;background:#0c1438;border:2px solid rgba(76,201,240,.5);padding:6px 12px;border-radius:999px;font-weight:800;letter-spacing:.3px}
+
+.hud{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.hud .tile{background:#0b1233;border:2px solid rgba(255,255,255,.14);border-radius:12px;padding:8px 12px;display:flex;align-items:center;gap:8px}
+.key{font-weight:900;color:var(--accent)}
+.value{font-weight:900;color:var(--gold)}
+.timer{flex:1;height:14px;background:#101a42;border:1px solid rgba(255,255,255,.12);border-radius:999px;overflow:hidden}
+.fill{height:100%;width:100%;background:linear-gradient(90deg,#43ffd2,#2dd4bf)}
+
+#arena-wrap{position:relative;height:520px;background:
+  radial-gradient(500px 320px at 15% 20%, rgba(76,201,240,.08), transparent 60%),
+  radial-gradient(600px 360px at 85% 80%, rgba(255,255,255,.06), transparent 60%),
+  #090e25;border-radius:22px;border:1px solid rgba(255,255,255,.1);
+  overflow:hidden}
+/* Single-color bubbles */
+.bubble{position:absolute;display:grid;place-items:center;width:92px;height:92px;border-radius:50%;
+  background:radial-gradient(circle at 30% 30%, #ffffff, #e8f7ff 55%, #bcecff 56% 65%, #7dd7f5 80%, #3aa6c4 100%);
+  color:#082a3a;font-weight:900;font-size:30px;user-select:none;cursor:pointer;border:3px solid rgba(255,255,255,.9);
+  box-shadow:0 10px 18px rgba(0,0,0,.35)}
+
+.target{display:inline-flex;align-items:center;gap:8px;font-weight:900}
+.target .sym{font-size:40px;color:var(--gold);text-shadow:0 0 18px rgba(255,207,51,.45)}
+
+.pop{position:absolute;left:50%;top:10px;transform:translateX(-50%);display:none;align-items:center;gap:10px;
+  padding:12px 18px;border-radius:14px;font-weight:900;font-size:26px;z-index:5}
+.pop.ok{background:rgba(45,212,191,.15);border:2px solid #2dd4bf;color:#b8fff4}
+.pop.no{background:rgba(255,107,107,.15);border:2px solid #ff6b6b;color:#ffd6d6}
+.pop.show{display:flex;animation:bounce .85s ease}
+@keyframes bounce{0%{transform:translate(-50%,18px) scale(.6);opacity:0}
+40%{transform:translate(-50%,-4px) scale(1.12);opacity:1}
+70%{transform:translate(-50%,0) scale(.96)}100%{transform:translate(-50%,0) scale(1)}}
+
+.summary{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.stat{background:#0b1233;border:2px solid rgba(255,255,255,.14);border-radius:14px;padding:12px}
+.center{text-align:center}
+</style>
+</head>
+<body>
+  <div class="space"></div><div class="stars"></div><div class="stars2"></div><div class="stars3"></div>
+
+  <div class="header">
+    <div class="banner">
+      <div class="logo">Kru Pai Classroom</div>
+      <div class="brand">ภารกิจช่วยธาตุ · ธีมอวกาศ</div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="card" id="page-start">
+      <h1>ภารกิจช่วยธาตุ (ธีมอวกาศ)</h1>
+      <p class="subtitle">โจทย์เป็น <b>ภาษาไทยล้วน</b> – เลือก <span class="badge">สัญลักษณ์ธาตุ</span> ให้ถูกต้องภายใน <b>7 วิ</b></p>
+      <div class="row">
+        <div class="card">
+          <div style="margin-bottom:8px;font-weight:900">ตั้งค่าด่วน</div>
+          <input id="nickname" class="input" placeholder="ชื่อเล่น เช่น มายด์, ปอนด์, ใบตอง"/>
+          <div style="height:8px"></div>
+          <div class="grid2">
+            <button class="btn" onclick="startGame(12)">เริ่มโหมดมาตรฐาน (12 รอบ)</button>
+            <button class="btn red" onclick="startGame(20)">โหมดยาว (20 รอบ)</button>
+          </div>
+          <div style="margin-top:8px;font-size:12px;opacity:.85">ต่อรอบสุ่มฟอง 5–6 ฟอง (มีตัวลวงคล้ายกัน เช่น N / Na / Ne / Ni)</div>
+        </div>
+        <div class="card">
+          <div style="font-weight:900;margin-bottom:8px">วิธีเล่น</div>
+          <ul>
+            <li>ดู “<b>ชื่อธาตุ</b>” ที่บอกไว้ แล้วกดฟองที่เป็น <b>สัญลักษณ์ที่ถูกต้อง</b></li>
+            <li>หมดเวลา = พลาดหนึ่งครั้ง</li>
+            <li>ตอบถูก: ป้ายเด้ง <b style="color:var(--ok)">✔ ถูกต้อง!</b> + เอฟเฟกต์ระเบิดเฉลิมฉลอง</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="page-game" style="display:none">
+      <div class="hud">
+        <div class="tile">ผู้เล่น: <b id="who" class="value">-</b></div>
+        <div class="tile">รอบ: <b id="round" class="value">1</b>/<b id="rounds">12</b></div>
+        <div class="tile target">ชื่อธาตุ: <span id="target-name" class="sym">?</span></div>
+        <div class="tile">ถูก: <b id="right" style="color:var(--ok)">0</b> · พลาด: <b id="wrong" style="color:var(--bad)">0</b></div>
+        <div class="timer"><div class="fill" id="bar"></div></div><span id="tleft">7</span> วินาที
+      </div>
+      <div id="arena-wrap">
+        <canvas id="fx" width="1200" height="520" style="position:absolute;inset:0;pointer-events:none"></canvas>
+        <div id="arena"></div>
+        <div id="popOK" class="pop ok"><span>✔</span> ถูกต้อง!</div>
+        <div id="popNO" class="pop no"><span>✖</span> โอ๊ะ! ไม่ใช่</div>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:center;margin-top:10px">
+        <button class="btn" onclick="nextRound()">ข้อต่อไป ➜</button>
+        <button class="btn red" onclick="endGame()">ยุติเกม</button>
+      </div>
+    </div>
+
+    <div class="card" id="page-summary" style="display:none">
+      <h1>สรุปภารกิจ</h1>
+      <div class="summary">
+        <div class="stat"><b>ผู้เล่น</b><div id="sum-name">-</div></div>
+        <div class="stat"><b>คะแนนรวม</b><div><span id="sum-right" style="color:var(--ok);font-weight:900"></span> / <span id="sum-total"></span></div></div>
+      </div>
+      <div class="center" style="margin-top:12px">
+        <button class="btn" onclick="restart()">เล่นใหม่ ⟲</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* ====== ข้อมูลธาตุ (ชื่อไทยล้วน) ====== */
+const ITEMS=[
+  {th:"ไฮโดรเจน", sym:"H", alts:["He","Hg","N"]},
+  {th:"ฮีเลียม", sym:"He", alts:["H","Hf","Ne"]},
+  {th:"ลิเทียม", sym:"Li", alts:["L","Le","Na"]},
+  {th:"เบริลเลียม", sym:"Be", alts:["B","Ba","Br"]},
+  {th:"โบรอน", sym:"B", alts:["Be","Br","Bi"]},
+  {th:"คาร์บอน", sym:"C", alts:["Ca","Cu","Cl"]},
+  {th:"ไนโตรเจน", sym:"N", alts:["Na","Ne","Ni"]},
+  {th:"ออกซิเจน", sym:"O", alts:["Os","Og","Cu"]},
+  {th:"ฟลูออรีน", sym:"F", alts:["Fe","Fr","P"]},
+  {th:"นีออน", sym:"Ne", alts:["Ni","Na","N"]},
+  {th:"โซเดียม", sym:"Na", alts:["Ne","N","Ni"]},
+  {th:"แมกนีเซียม", sym:"Mg", alts:["Mn","Mg.","M"]},
+  {th:"อะลูมิเนียม", sym:"Al", alts:["Au","Ag","Ai"]},
+  {th:"ซิลิคอน", sym:"Si", alts:["S","Sn","Sc"]},
+  {th:"ฟอสฟอรัส", sym:"P", alts:["Pt","Pb","Po"]},
+  {th:"กำมะถัน", sym:"S", alts:["Si","Sr","Se"]},
+  {th:"คลอรีน", sym:"Cl", alts:["Cu","C","Ci"]},
+  {th:"อาร์กอน", sym:"Ar", alts:["Ag","Au","Rn"]},
+  {th:"โพแทสเซียม", sym:"K", alts:["P","Pt","Kr"]},
+  {th:"แคลเซียม", sym:"Ca", alts:["C","Cu","Cl"]},
+  {th:"เหล็ก", sym:"Fe", alts:["F","Fr","Ir"]},
+  {th:"ทองแดง", sym:"Cu", alts:["Co","C","Cl"]},
+  {th:"สังกะสี", sym:"Zn", alts:["Zr","Z","Ni"]},
+  {th:"เงิน", sym:"Ag", alts:["Au","Ar","Al"]},
+  {th:"ทองคำ", sym:"Au", alts:["Ag","Al","Cu"]},
+  {th:"ปรอท", sym:"Hg", alts:["He","Hf","Mg"]},
+  {th:"ตะกั่ว", sym:"Pb", alts:["P","Pt","Pd"]},
+  {th:"ดีบุก", sym:"Sn", alts:["Si","S","Zn"]},
+  {th:"ไอโอดีน", sym:"I", alts:["Ir","In","Li"]},
+  {th:"นิกเกิล", sym:"Ni", alts:["Ne","Na","N"]}
+];
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+
+let nickname='ผู้เล่น'; let totalRounds=12;
+let order=[], idx=0, right=0, wrong=0;
+let timer=null, remain=7;
+const arenaWrap = ()=>document.getElementById('arena-wrap');
+const arena = ()=>document.getElementById('arena');
+const fx = ()=>document.getElementById('fx');
+let bubbles=[];
+
+/* เสียง Beep สั้น ๆ */
+const beep=(f=880,d=0.1,t='sine')=>{try{const ctx=new (window.AudioContext||window.webkitAudioContext)();
+const o=ctx.createOscillator(), g=ctx.createGain(); o.type=t; o.frequency.value=f; o.connect(g); g.connect(ctx.destination);
+const now=ctx.currentTime; g.gain.setValueAtTime(0.0001,now); g.gain.exponentialRampToValueAtTime(0.22,now+0.01);
+g.gain.exponentialRampToValueAtTime(0.00001,now+d); o.start(); o.stop(now+d+0.01);}catch(e){}};
+const sOK=()=>beep(1300,0.1,'triangle'); const sNO=()=>beep(220,0.16,'sawtooth'); const sTick=()=>beep(700,0.05,'square');
+
+/* เอฟเฟกต์ระเบิด (Canvas) */
+function boom(x,y){
+  const ctx=fx().getContext('2d');
+  const parts=[]; const N=90;
+  for(let i=0;i<N;i++){
+    const ang = Math.random()*Math.PI*2;
+    const sp = 2+Math.random()*5;
+    parts.push({x,y,vx:Math.cos(ang)*sp, vy:Math.sin(ang)*sp, life:40+Math.random()*20, r:2+Math.random()*3});
+  }
+  let frame=0;
+  function step(){
+    ctx.clearRect(0,0,fx().width,fx().height);
+    ctx.globalCompositeOperation='lighter';
+    for(const p of parts){
+      p.x+=p.vx; p.y+=p.vy; p.vy+=0.08; p.life--;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      const alpha = Math.max(0, p.life/60);
+      ctx.fillStyle = `rgba(255, ${Math.floor(180+Math.random()*75)}, ${Math.floor(90+Math.random()*120)}, ${alpha})`;
+      ctx.fill();
+    }
+    frame++;
+    if(frame<70){ requestAnimationFrame(step); } else { ctx.clearRect(0,0,fx().width,fx().height); }
+  }
+  step();
+}
+
+/* UI helpers */
+function show(el){ el.style.display='block'; }
+function hide(el){ el.style.display='none'; }
+function pop(el){ el.classList.remove('show'); void el.offsetWidth; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'), 900); }
+
+/* เกม */
+function startGame(rounds=12){
+  nickname=(document.getElementById('nickname').value||'นักเรียนคนเก่ง').trim();
+  totalRounds=rounds;
+  order = Array.from(ITEMS.keys()); shuffle(order);
+  idx=0; right=0; wrong=0;
+  document.getElementById('who').textContent=nickname;
+  document.getElementById('rounds').textContent=totalRounds;
+  hide(document.getElementById('page-start')); show(document.getElementById('page-game'));
+  nextRound();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function endGame(){ finish(); }
+
+function nextRound(){
+  if(timer){ clearInterval(timer); timer=null; }
+  if(idx>=totalRounds){ finish(); return; }
+  const target = ITEMS[ order[idx%ITEMS.length] ];
+  document.getElementById('round').textContent = (idx+1);
+  document.getElementById('right').textContent = right;
+  document.getElementById('wrong').textContent = wrong;
+  document.getElementById('target-name').textContent = target.th;
+  spawnBubbles(target);
+  remain=7; document.getElementById('tleft').textContent=remain; document.getElementById('bar').style.width='100%';
+  timer=setInterval(()=>{
+    remain--; document.getElementById('tleft').textContent=remain;
+    document.getElementById('bar').style.width = Math.max(0, remain/7*100) + '%';
+    if(remain<=3) sTick();
+    if(remain<=0){ clearInterval(timer); timer=null; miss(); }
+  },1000);
+}
+
+function spawnBubbles(target){
+  arena().innerHTML=''; bubbles=[];
+  const W = arenaWrap().clientWidth, H=arenaWrap().clientHeight;
+  // สร้างชุดตัวเลือก: เป้าหมาย + ตัวลวง 4–5 ตัว
+  const opts = new Set([target.sym]);
+  const choose = (arr)=>arr[Math.floor(Math.random()*arr.length)];
+  shuffle([...target.alts]).slice(0,3).forEach(x=>opts.add(x));
+  const pool = ["H","He","Hg","Li","Na","Ne","Ni","C","Ca","Cu","Cl","P","Pb","Pt","S","Si","Sn","K","Kr","Fe","Ag","Au","Zn","Ar","Al","Mg"];
+  while(opts.size < 5 + Math.floor(Math.random()*2)){ opts.add(choose(pool)); }
+  const list=[...opts]; shuffle(list);
+
+  list.forEach(sym=>{
+    const d=document.createElement('div'); d.className='bubble'; d.textContent=sym;
+    const x=Math.random()*(W-110)+10, y=Math.random()*(H-110)+10;
+    const vx=(Math.random()*2+1)*(Math.random()<.5?-1:1);
+    const vy=(Math.random()*2+1)*(Math.random()<.5?-1:1);
+    d.style.left=x+'px'; d.style.top=y+'px';
+    arena().appendChild(d);
+    const b={el:d,x,y,vx,vy,w:92,h:92,sym};
+    b.el.onclick = (ev)=>{
+      ev.stopPropagation();
+      if(sym===target.sym){ hit(b); } else { no(b); }
+    };
+    bubbles.push(b);
+  });
+  animate();
+}
+
+let animRAF=null;
+function animate(){
+  if(animRAF) cancelAnimationFrame(animRAF);
+  const W = arenaWrap().clientWidth, H=arenaWrap().clientHeight;
+  function step(){
+    for(const b of bubbles){
+      b.x+=b.vx; b.y+=b.vy;
+      if(b.x<=0 || b.x+b.w>=W){ b.vx*=-1; b.x=Math.min(Math.max(0,b.x),W-b.w); }
+      if(b.y<=0 || b.y+b.h>=H){ b.vy*=-1; b.y=Math.min(Math.max(0,b.y),H-b.h); }
+      b.el.style.left=b.x+'px'; b.el.style.top=b.y+'px';
+    }
+    animRAF=requestAnimationFrame(step);
+  }
+  step();
+}
+
+function hit(b){
+  sOK();
+  const ok=document.getElementById('popOK'); pop(ok);
+  right++; document.getElementById('right').textContent=right;
+  const rect=b.el.getBoundingClientRect(), parent=arenaWrap().getBoundingClientRect();
+  const cx=rect.left - parent.left + b.w/2, cy=rect.top - parent.top + b.h/2;
+  boom(cx,cy);
+  arena().innerHTML=''; bubbles=[];
+  if(timer){ clearInterval(timer); timer=null; }
+  setTimeout(()=>{ idx++; nextRound(); }, 500);
+}
+
+function no(b){
+  sNO(); const bad=document.getElementById('popNO'); pop(bad);
+  b.vx*=-1; b.vy*=-1;
+}
+
+function miss(){
+  sNO();
+  const bad=document.getElementById('popNO'); bad.textContent="✖ โอ๊ะ! ไม่ใช่ (หมดเวลา)"; pop(bad);
+  wrong++; document.getElementById('wrong').textContent=wrong;
+  arena().innerHTML=''; bubbles=[];
+  setTimeout(()=>{ idx++; nextRound(); }, 400);
+}
+
+function finish(){
+  if(timer){ clearInterval(timer); timer=null; }
+  if(animRAF){ cancelAnimationFrame(animRAF); animRAF=null; }
+  hide(document.getElementById('page-game')); show(document.getElementById('page-summary'));
+  document.getElementById('sum-name').textContent=nickname;
+  document.getElementById('sum-right').textContent=right;
+  document.getElementById('sum-total').textContent=totalRounds;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function restart(){ hide(document.getElementById('page-summary')); show(document.getElementById('page-start')); }
+</script>
+</body>
+</html>
